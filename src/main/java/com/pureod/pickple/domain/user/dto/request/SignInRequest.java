@@ -1,4 +1,4 @@
-package com.pureod.pickple.domain.user.dto;
+package com.pureod.pickple.domain.user.dto.request;
 
 public record SignInRequest(
     String username,
