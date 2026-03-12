@@ -16,8 +16,7 @@ public class JwtLogoutHandler implements LogoutHandler {
     public void logout(HttpServletRequest request,
         HttpServletResponse response,
         Authentication authentication) {
-        // Refresh Token 쿠키 삭제
-        Cookie cookie = new Cookie("refreshToken", null);
+        Cookie cookie = new Cookie(JwtTokenProvider.REFRESH_TOKEN_COOKIE_NAME, null);
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/");
