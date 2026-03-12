@@ -26,7 +26,7 @@ public class User extends BaseUpdatableEntity {
     @Column(name = "name", length = 20, nullable = false)
     private String name;
 
-    @Column(name = "password", length = 20, nullable = false)
+    @Column(name = "password", length = 255, nullable = false)
     private String password;
 
     @Column(name = "profile_image_url", columnDefinition = "TEXT")
