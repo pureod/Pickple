@@ -27,6 +27,6 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("사용자 계정이 잠겨 있습니다: " + email);
         }
 
-        return new PickpleUserDetails(userMapper.toDto(user));
+        return new PickpleUserDetails(userMapper.toDto(user), user.getPassword());
     }
 }
