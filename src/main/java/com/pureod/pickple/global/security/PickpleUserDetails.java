@@ -15,6 +15,11 @@ import java.util.Collections;
 public class PickpleUserDetails implements UserDetails {
 
     private final UserDto userDto;
+    private final String password;
+
+    public PickpleUserDetails(UserDto userDto) {
+        this(userDto, null);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -25,7 +30,7 @@ public class PickpleUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null; // JWT 사용 시 비밀번호는 불필요
+        return password;
     }
 
     @Override
