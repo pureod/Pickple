@@ -39,4 +39,9 @@ public class User extends BaseUpdatableEntity {
     @Column(name = "locked", nullable = false)
     private boolean locked;
 
+
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
+
 }
