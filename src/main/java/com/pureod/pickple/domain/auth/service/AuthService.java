@@ -1,13 +1,13 @@
 package com.pureod.pickple.domain.auth.service;
 
 import com.nimbusds.jose.JOSEException;
+import com.pureod.pickple.domain.auth.dto.JwtDto;
 import com.pureod.pickple.global.security.JwtTokenProvider;
 import com.pureod.pickple.global.security.PickpleUserDetails;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
 
-    public Map<String, Object> reissueToken(HttpServletRequest request,
+    public JwtDto reissueToken(HttpServletRequest request,
         HttpServletResponse response) {
         // 1. 쿠키에서 Refresh Token 추출
         String refreshToken = extractRefreshTokenFromCookie(request);
@@ -40,10 +40,7 @@ public class AuthService {
             // 4. 새 Refresh Token 쿠키 설정
             response.addCookie(jwtTokenProvider.generateRefreshTokenCookie(newRefreshToken));
 
-            return Map.of(
-                "accessToken", newAccessToken,
-                "userDto", userDetails.getUserDto()
-            );
+            return new JwtDto(newAccessToken, userDetails.getUserDto());
         } catch (JOSEException e) {
             throw new RuntimeException("토큰 생성 실패", e);
         }
