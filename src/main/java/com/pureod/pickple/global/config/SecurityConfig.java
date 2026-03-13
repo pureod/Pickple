@@ -52,7 +52,6 @@ public class SecurityConfig {
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .ignoringRequestMatchers(
                     "/api/auth/sign-in",
-                    "/api/auth/sign-out",
                     "/api/users"  // 회원가입
                 )
             )
@@ -64,6 +63,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/users").permitAll()           // 회원가입
                 .requestMatchers(HttpMethod.POST, "/api/auth/reset-password").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/auth/csrf-token").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
                 .requestMatchers("/", "/index.html", "/assets/**", "/favicon.svg").permitAll()
 
                 // 어드민 전용
