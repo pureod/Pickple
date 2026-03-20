@@ -1,16 +1,22 @@
 package com.pureod.pickple.domain.user.service;
 
-import com.pureod.pickple.domain.user.dto.request.UserCreateRequest;
 import com.pureod.pickple.domain.user.dto.UserDto;
+import com.pureod.pickple.domain.user.dto.request.UserCreateRequest;
+import com.pureod.pickple.domain.user.dto.request.UserUpdateRequest;
 import com.pureod.pickple.domain.user.entity.User;
 import com.pureod.pickple.domain.user.enums.Role;
 import com.pureod.pickple.domain.user.mapper.UserMapper;
 import com.pureod.pickple.domain.user.repository.UserRepository;
+import com.pureod.pickple.domain.user.storage.ProfileImageStorage;
+import com.pureod.pickple.global.exception.ResourceNotFoundException;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -20,6 +26,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final ProfileImageStorage profileImageStorage;
 
     @Transactional
     @Override
@@ -45,5 +52,30 @@ public class UserServiceImpl implements UserService {
 
         log.info("[Service] 사용자 생성 완료 - {}", savedUser.getName());
         return userMapper.toDto(savedUser);
+    }
+
+    @Transactional
+    @Override
+    public UserDto updateProfile(UUID targetUserId, UUID requesterUserId, UserUpdateRequest request,
+        MultipartFile image) {
+        log.info("[Service] 프로필 변경 시작 - targetUserId={}, requesterUserId={}", targetUserId,
+            requesterUserId);
+
+        if (!targetUserId.equals(requesterUserId)) {
+            throw new AccessDeniedException("본인 프로필만 수정할 수 있습니다.");
+        }
+
+        User user = userRepository.findById(targetUserId)
+            .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
+
+        String profileImageUrl = null;
+        if (image != null && !image.isEmpty()) {
+            profileImageUrl = profileImageStorage.upload(user.getId(), image);
+        }
+
+        user.updateProfile(request.name(), profileImageUrl);
+
+        log.info("[Service] 프로필 변경 완료 - userId={}", user.getId());
+        return userMapper.toDto(user);
     }
 }

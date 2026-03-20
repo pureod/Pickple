@@ -40,6 +40,17 @@ public class User extends BaseUpdatableEntity {
     private boolean locked;
 
 
+
+    public void updateProfile(String name, String profileImageUrl) {
+        if (name != null && !name.isBlank()) {
+            this.name = name;
+        }
+
+        if (profileImageUrl != null && !profileImageUrl.isBlank()) {
+            this.profileImageUrl = profileImageUrl;
+        }
+    }
+
     public void changePassword(String encodedPassword) {
         this.password = encodedPassword;
     }
