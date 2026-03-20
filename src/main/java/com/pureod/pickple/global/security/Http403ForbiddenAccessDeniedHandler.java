@@ -1,11 +1,11 @@
 package com.pureod.pickple.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pureod.pickple.global.exception.ErrorResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,10 +30,7 @@ public class Http403ForbiddenAccessDeniedHandler implements AccessDeniedHandler 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        Map<String, String> errorResponse = Map.of(
-            "exceptionName", "AccessDeniedException",
-            "message", "접근 권한이 없습니다."
-        );
+        ErrorResponse errorResponse = ErrorResponse.of("AccessDeniedException", "접근 권한이 없습니다.");
 
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }

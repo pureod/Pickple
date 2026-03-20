@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-            .body(ErrorResponse.of("AccessDeniedException", ex.getMessage()));
+            .body(ErrorResponse.of("AccessDeniedException", "접근 권한이 없습니다."));
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
