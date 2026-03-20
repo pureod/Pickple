@@ -26,7 +26,7 @@ public class User extends BaseUpdatableEntity {
     @Column(name = "name", length = 20, nullable = false)
     private String name;
 
-    @Column(name = "password", length = 255, nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "profile_image_url", columnDefinition = "TEXT")
@@ -42,11 +42,11 @@ public class User extends BaseUpdatableEntity {
 
 
     public void updateProfile(String name, String profileImageUrl) {
-        if (name != null && !name.isBlank()) {
+        if (name != null && !name.isBlank() && !name.equals(this.name)) {
             this.name = name;
         }
 
-        if (profileImageUrl != null && !profileImageUrl.isBlank()) {
+        if (profileImageUrl != null && !profileImageUrl.isBlank() && !profileImageUrl.equals(this.profileImageUrl)) {
             this.profileImageUrl = profileImageUrl;
         }
     }
