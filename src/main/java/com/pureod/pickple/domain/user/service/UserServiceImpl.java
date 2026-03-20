@@ -9,6 +9,7 @@ import com.pureod.pickple.domain.user.mapper.UserMapper;
 import com.pureod.pickple.domain.user.repository.UserRepository;
 import com.pureod.pickple.domain.user.storage.ProfileImageStorage;
 import com.pureod.pickple.global.exception.ResourceNotFoundException;
+import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,13 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+
+    private static final long MAX_PROFILE_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+    private static final Set<String> ALLOWED_PROFILE_IMAGE_TYPES = Set.of(
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    );
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -70,6 +78,7 @@ public class UserServiceImpl implements UserService {
 
         String profileImageUrl = null;
         if (image != null && !image.isEmpty()) {
+            validateProfileImage(image);
             profileImageUrl = profileImageStorage.upload(user.getId(), image);
         }
 
@@ -77,5 +86,17 @@ public class UserServiceImpl implements UserService {
 
         log.info("[Service] 프로필 변경 완료 - userId={}", user.getId());
         return userMapper.toDto(user);
+    }
+
+    private void validateProfileImage(MultipartFile image) {
+        String contentType = image.getContentType();
+
+        if (contentType == null || !ALLOWED_PROFILE_IMAGE_TYPES.contains(contentType)) {
+            throw new IllegalArgumentException("프로필 이미지는 JPG, PNG, WEBP 형식만 업로드할 수 있습니다.");
+        }
+
+        if (image.getSize() > MAX_PROFILE_IMAGE_SIZE_BYTES) {
+            throw new IllegalArgumentException("프로필 이미지는 5MB 이하만 업로드할 수 있습니다.");
+        }
     }
 }
